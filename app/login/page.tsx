@@ -9,6 +9,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/dashboard";
+  const logoutSuccess = searchParams.get("logout") === "success";
 
   const [email, setEmail] = useState("");
   const [pin, setPin] = useState("");
@@ -92,6 +93,13 @@ function LoginForm() {
               />
             </div>
           </div>
+
+          {logoutSuccess && (
+            <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">
+              <p className="font-medium">Successfully logged out</p>
+              <p className="text-xs mt-1">Sign in again to continue</p>
+            </div>
+          )}
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">

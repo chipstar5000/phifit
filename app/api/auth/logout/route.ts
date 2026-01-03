@@ -5,7 +5,8 @@ export async function POST() {
   try {
     await clearSession();
 
-    return NextResponse.json({ success: true });
+    // Redirect to login page with success message
+    return NextResponse.redirect(new URL("/login?logout=success", process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"));
   } catch (error) {
     console.error("Logout error:", error);
     return NextResponse.json(
