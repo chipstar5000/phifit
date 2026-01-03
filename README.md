@@ -90,7 +90,7 @@ npm run db:studio    # Open Prisma Studio
 ## Project Status
 
 - [x] Project setup & infrastructure
-- [ ] Email + PIN authentication
+- [x] Email + PIN authentication
 - [ ] Challenge & task management
 - [ ] Weekly completions & lifecycle
 - [ ] Leaderboards & payouts
