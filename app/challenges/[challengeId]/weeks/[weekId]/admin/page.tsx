@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import WeekAdminGrid from "@/components/week-admin-grid";
 import WeekStatusControl from "@/components/week-status-control";
+import { detectPerfectWeeks } from "@/lib/tokens";
 
 export default async function WeekAdminPage({
   params,
@@ -166,6 +167,12 @@ export default async function WeekAdminPage({
         participants.length
       : 0;
 
+  // Detect perfect weeks
+  const perfectWeekUserIds = await detectPerfectWeeks(challengeId, weekId);
+  const perfectWeekParticipants = participants.filter((p: { userId: string }) =>
+    perfectWeekUserIds.includes(p.userId)
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow">
@@ -259,6 +266,36 @@ export default async function WeekAdminPage({
               </p>
             </div>
           </div>
+
+          {/* Perfect Week Token Awards */}
+          {perfectWeekParticipants.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                  <circle cx="10" cy="10" r="8" fill="#FCD34D" stroke="currentColor" strokeWidth="1" />
+                </svg>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  Token Awards ({perfectWeekParticipants.length} {perfectWeekParticipants.length === 1 ? "participant" : "participants"})
+                </h3>
+              </div>
+              <p className="text-xs text-gray-600 mb-3">
+                {week.status === "LOCKED"
+                  ? "Tokens awarded to participants who completed all tasks:"
+                  : "These participants will earn tokens when the week is locked:"}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {perfectWeekParticipants.map((participant: { userId: string; user: { displayName: string; email: string } }) => (
+                  <div
+                    key={participant.userId}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 border border-yellow-200 text-yellow-900 rounded-lg text-sm"
+                  >
+                    <span className="font-medium">{participant.user.displayName}</span>
+                    <span className="text-yellow-700">+1</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Admin Grid */}

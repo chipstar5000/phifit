@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { verifyOrganizer } from "@/lib/authorization";
+import { awardPerfectWeekTokensSafe } from "@/lib/tokens";
 
 // POST /api/challenges/[challengeId]/weeks/[weekId]/admin/lock - Manual lock/unlock week
 export async function POST(
@@ -53,9 +54,24 @@ export async function POST(
       },
     });
 
+    // If locking the week, detect perfect weeks and award tokens
+    let tokenAwards = null;
+    if (action === "lock") {
+      try {
+        tokenAwards = await awardPerfectWeekTokensSafe(challengeId, weekId);
+        console.log(
+          `Week ${weekId} locked: ${tokenAwards.awarded} tokens awarded, ${tokenAwards.alreadyAwarded} already had tokens`
+        );
+      } catch (tokenError) {
+        // Log error but don't fail the lock operation
+        console.error("Error awarding perfect week tokens:", tokenError);
+      }
+    }
+
     return NextResponse.json({
       week: updatedWeek,
       message: `Week ${action === "lock" ? "locked" : "unlocked"} successfully`,
+      tokenAwards: tokenAwards || undefined,
     });
   } catch (error) {
     console.error("Week lock/unlock error:", error);

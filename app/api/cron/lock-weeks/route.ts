@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { awardPerfectWeekTokensSafe } from "@/lib/tokens";
 
 /**
  * Cron endpoint to auto-lock weeks that have ended
@@ -43,12 +44,24 @@ export async function GET() {
           },
         });
 
+        // Award tokens for perfect weeks
+        let tokenAwards = null;
+        try {
+          tokenAwards = await awardPerfectWeekTokensSafe(week.challengeId, week.id);
+          console.log(
+            `Week ${week.weekIndex} (${week.challenge.name}): ${tokenAwards.awarded} tokens awarded, ${tokenAwards.alreadyAwarded} already had tokens`
+          );
+        } catch (tokenError) {
+          console.error(`Error awarding tokens for week ${week.id}:`, tokenError);
+        }
+
         results.push({
           weekId: week.id,
           challengeId: week.challengeId,
           challengeName: week.challenge.name,
           weekIndex: week.weekIndex,
           status: "locked",
+          tokensAwarded: tokenAwards?.awarded,
         });
 
         console.log(

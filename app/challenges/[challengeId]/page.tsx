@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getCurrentWeekIndex, calculateEndDate } from "@/lib/weeks";
 import TaskManager from "@/components/task-manager";
 import ParticipantManager from "@/components/participant-manager";
+import TokenBalance from "@/components/token-balance";
 
 export default async function ChallengePage({
   params,
@@ -166,6 +167,17 @@ export default async function ChallengePage({
                 )}
               </p>
             </div>
+          </div>
+
+          {/* Token Balance - Always Show */}
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-medium text-gray-700">Your Tokens</p>
+              <TokenBalance challengeId={challenge.id} size="md" showLabel={true} />
+            </div>
+            <p className="text-xs text-gray-500">
+              Earn 1 token for each perfect week (completing all tasks)
+            </p>
           </div>
 
           {(Number(challenge.buyInAmount) > 0 || Number(challenge.weeklyPrizeAmount) > 0) && (
