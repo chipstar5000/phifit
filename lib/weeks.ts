@@ -1,4 +1,4 @@
-import { WeekStatus } from "@prisma/client";
+export type WeekStatus = "UPCOMING" | "OPEN" | "LOCKED";
 
 export interface WeekData {
   weekIndex: number;
@@ -28,11 +28,11 @@ export function generateWeeks(
     // Determine week status
     let status: WeekStatus;
     if (now < weekStart) {
-      status = WeekStatus.UPCOMING;
+      status = "UPCOMING";
     } else if (now > weekEnd) {
-      status = WeekStatus.LOCKED;
+      status = "LOCKED";
     } else {
-      status = WeekStatus.OPEN;
+      status = "OPEN";
     }
 
     weeks.push({

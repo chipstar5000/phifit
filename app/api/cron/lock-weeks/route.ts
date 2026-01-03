@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { WeekStatus } from "@prisma/client";
 
 /**
  * Cron endpoint to auto-lock weeks that have ended
@@ -15,7 +14,7 @@ export async function GET() {
     // Find all OPEN weeks that have passed their end date
     const weeksToLock = await prisma.week.findMany({
       where: {
-        status: WeekStatus.OPEN,
+        status: "OPEN",
         endDate: {
           lt: now,
         },
@@ -39,7 +38,7 @@ export async function GET() {
         await prisma.week.update({
           where: { id: week.id },
           data: {
-            status: WeekStatus.LOCKED,
+            status: "LOCKED",
             lockedAt: now,
           },
         });
@@ -70,7 +69,7 @@ export async function GET() {
     // Also update any UPCOMING weeks that have started
     const weeksToOpen = await prisma.week.findMany({
       where: {
-        status: WeekStatus.UPCOMING,
+        status: "UPCOMING",
         startDate: {
           lte: now,
         },
@@ -85,7 +84,7 @@ export async function GET() {
         await prisma.week.update({
           where: { id: week.id },
           data: {
-            status: WeekStatus.OPEN,
+            status: "OPEN",
           },
         });
 

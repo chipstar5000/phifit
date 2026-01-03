@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { CompletionSource, WeekStatus } from "@prisma/client";
 
 // GET /api/challenges/[challengeId]/weeks/[weekId]/completions
 export async function GET(
@@ -115,7 +114,7 @@ export async function POST(
     }
 
     // Participants can only edit during OPEN status
-    if (week.status !== WeekStatus.OPEN) {
+    if (week.status !== "OPEN") {
       return NextResponse.json(
         { error: "Week is not open for completions" },
         { status: 400 }
@@ -150,11 +149,11 @@ export async function POST(
           weekId,
           taskTemplateId,
           userId: session.userId,
-          source: CompletionSource.PARTICIPANT,
+          source: "PARTICIPANT",
         },
         update: {
           completedAt: new Date(),
-          source: CompletionSource.PARTICIPANT,
+          source: "PARTICIPANT",
         },
         include: {
           taskTemplate: {
