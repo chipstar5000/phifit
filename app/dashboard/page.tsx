@@ -92,7 +92,7 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {challenges.map((challenge) => {
+            {challenges.map((challenge: { id: string; name: string; description: string; startDate: Date; numberOfWeeks: number; organizerUserId: string; _count: { participants: number } }) => {
               const isOrganizer = challenge.organizerUserId === session.userId;
               const currentWeek = getCurrentWeekIndex(
                 challenge.startDate,

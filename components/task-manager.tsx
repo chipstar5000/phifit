@@ -166,8 +166,8 @@ export default function TaskManager({
       ) : (
         <div className="space-y-2">
           {tasks
-            .filter((t) => t.active)
-            .map((task) => (
+            .filter((t: { active: boolean }) => t.active)
+            .map((task: { id: string; name: string; description?: string; points: number; active: boolean }) => (
               <div
                 key={task.id}
                 className="flex items-start justify-between p-3 bg-gray-50 rounded-lg"

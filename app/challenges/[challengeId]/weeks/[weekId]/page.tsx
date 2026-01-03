@@ -128,7 +128,7 @@ export default async function WeekDetailPage({
             <div>
               <p className="text-sm text-gray-600">All Weeks</p>
               <div className="flex gap-2 mt-2 flex-wrap">
-                {challenge.weeks.map((w, index) => {
+                {challenge.weeks.map((w: { id: string }, index: number) => {
                   const isCurrent = w.id === weekId;
 
                   return (

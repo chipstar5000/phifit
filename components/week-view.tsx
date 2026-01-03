@@ -166,7 +166,7 @@ export default function WeekView({
               No tasks for this week. {isOrganizer && "Add tasks to get started."}
             </p>
           ) : (
-            tasks.map((task) => {
+            tasks.map((task: { id: string; name: string; description?: string; points: number }) => {
               const isCompleted = completions.has(task.id);
               const isLoading = loading === task.id;
 

@@ -156,7 +156,7 @@ export default function ParticipantManager({
       )}
 
       <div className="space-y-2">
-        {participants.map((participant) => {
+        {participants.map((participant: { id: string; userId: string; user: { displayName: string; email: string } }) => {
           const isCurrentUser = participant.userId === currentUserId;
           const isOrganizerUser = participant.userId === organizerUserId;
           const canRemove =

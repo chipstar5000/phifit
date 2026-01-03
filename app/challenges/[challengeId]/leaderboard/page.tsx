@@ -125,7 +125,7 @@ export default async function LeaderboardPage({
               🏆 Grand Prize {winners.length > 1 ? "Winners" : "Winner"}
             </h2>
             <div className="space-y-2">
-              {winners.map((winner) => (
+              {winners.map((winner: { userId: string; displayName: string; points: number; prizeAmount: number }) => (
                 <div
                   key={winner.userId}
                   className="flex items-center justify-between bg-white rounded-lg p-4"
@@ -169,9 +169,9 @@ export default async function LeaderboardPage({
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {leaderboard.map((entry, index) => {
+              {leaderboard.map((entry: { userId: string; displayName: string; points: number; rank: number; tied?: boolean }, index: number) => {
                 const isCurrentUser = entry.userId === session.userId;
-                const isWinner = winners.some((w) => w.userId === entry.userId);
+                const isWinner = winners.some((w: { userId: string }) => w.userId === entry.userId);
 
                 return (
                   <div

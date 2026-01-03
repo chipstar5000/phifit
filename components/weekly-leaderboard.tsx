@@ -38,7 +38,7 @@ export default async function WeeklyLeaderboard({
             🎉 Weekly {winners.length > 1 ? "Winners" : "Winner"}
           </p>
           <div className="space-y-2">
-            {winners.map((winner) => (
+            {winners.map((winner: { userId: string; displayName: string; prizeAmount: number }) => (
               <div
                 key={winner.userId}
                 className="flex items-center justify-between"
@@ -61,9 +61,9 @@ export default async function WeeklyLeaderboard({
         </div>
       ) : (
         <div className="divide-y divide-gray-200">
-          {leaderboard.map((entry, index) => {
+          {leaderboard.map((entry: { userId: string; displayName: string; points: number; rank: number; tied?: boolean }, index: number) => {
             const isCurrentUser = entry.userId === currentUserId;
-            const isWinner = winners.some((w) => w.userId === entry.userId);
+            const isWinner = winners.some((w: { userId: string }) => w.userId === entry.userId);
 
             return (
               <div
