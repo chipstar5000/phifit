@@ -92,7 +92,7 @@ npm run db:studio    # Open Prisma Studio
 - [x] Project setup & infrastructure
 - [x] Email + PIN authentication
 - [x] Challenge & task management
-- [ ] Weekly completions & lifecycle
+- [x] Weekly completions & lifecycle
 - [ ] Leaderboards & payouts
 - [ ] Token system
 - [ ] Side challenges
