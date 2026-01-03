@@ -20,7 +20,7 @@ ssh-keygen -t ed25519 -C "phifit-deploy" -f ~/.ssh/phifit_github -N ""
 
 ### Public Key (Added to GitHub)
 ```
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIClTSiliq1/Skq0Mpwj6n2xDlh4Z/ZKdq/FFCD8XcJN4 phifit-deploy
+x
 ```
 
 This key was added to: https://github.com/chipstar5000/phifit/settings/keys
