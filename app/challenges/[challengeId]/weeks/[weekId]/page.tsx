@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import WeekView from "@/components/week-view";
+import WeeklyLeaderboard from "@/components/weekly-leaderboard";
 
 export default async function WeekDetailPage({
   params,
@@ -109,6 +110,17 @@ export default async function WeekDetailPage({
           currentUserId={session.userId}
           isOrganizer={isOrganizer}
         />
+
+        {/* Weekly Leaderboard */}
+        <div className="mt-6">
+          <WeeklyLeaderboard
+            challengeId={challenge.id}
+            weekId={week.id}
+            weeklyPrizeAmount={Number(challenge.weeklyPrizeAmount)}
+            currentUserId={session.userId}
+            isLocked={week.status === "LOCKED"}
+          />
+        </div>
 
         {/* Week navigation */}
         <div className="mt-6 bg-white shadow rounded-lg p-4">

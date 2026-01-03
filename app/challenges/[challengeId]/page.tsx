@@ -230,26 +230,55 @@ export default async function ChallengePage({
           </div>
         </div>
 
-        {currentWeek !== null && (
-          <div className="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {currentWeek !== null && (
+            <Link
+              href={`/challenges/${challenge.id}/week`}
+              className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-900 font-semibold text-lg">
+                    Week {currentWeek + 1} Active
+                  </p>
+                  <p className="text-blue-700 text-sm mt-1">
+                    Complete your tasks
+                  </p>
+                </div>
+                <svg
+                  className="w-6 h-6 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </Link>
+          )}
+
+          <Link
+            href={`/challenges/${challenge.id}/leaderboard`}
+            className="bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
+          >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-900 font-semibold text-lg">
-                  Week {currentWeek + 1} is active!
+                <p className="text-yellow-900 font-semibold text-lg">
+                  Leaderboard
                 </p>
-                <p className="text-blue-700 text-sm mt-1">
-                  Complete your tasks and earn points
+                <p className="text-yellow-700 text-sm mt-1">
+                  See overall standings
                 </p>
               </div>
-              <Link
-                href={`/challenges/${challenge.id}/week`}
-                className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-md"
-              >
-                Go to This Week
-              </Link>
+              <span className="text-2xl">🏆</span>
             </div>
-          </div>
-        )}
+          </Link>
+        </div>
       </main>
     </div>
   );
