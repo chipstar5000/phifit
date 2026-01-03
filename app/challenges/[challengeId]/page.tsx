@@ -231,11 +231,23 @@ export default async function ChallengePage({
         </div>
 
         {currentWeek !== null && (
-          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-blue-800">
-              <span className="font-semibold">Challenge is active!</span> Weekly
-              task completion features coming soon.
-            </p>
+          <div className="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-900 font-semibold text-lg">
+                  Week {currentWeek + 1} is active!
+                </p>
+                <p className="text-blue-700 text-sm mt-1">
+                  Complete your tasks and earn points
+                </p>
+              </div>
+              <Link
+                href={`/challenges/${challenge.id}/week`}
+                className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+              >
+                Go to This Week
+              </Link>
+            </div>
           </div>
         )}
       </main>
