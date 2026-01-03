@@ -1,0 +1,259 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  displayName String
+  pinHash     String
+  createdAt   DateTime @default(now())
+  lastLoginAt DateTime?
+
+  participants            Participant[]
+  organizedChallenges     Challenge[]
+  completions             Completion[]
+  tokenLedger             TokenLedger[]
+  createdSideChallenges   SideChallenge[] @relation("CreatedSideChallenges")
+  opponentSideChallenges  SideChallenge[] @relation("OpponentSideChallenges")
+  sideChallengeSubmissions SideChallengeSubmission[]
+  completionEdits         Completion[] @relation("CompletionEdits")
+
+  @@index([email])
+}
+
+model Challenge {
+  id                    String   @id @default(cuid())
+  name                  String
+  description           String   @default("")
+  startDate             DateTime
+  numberOfWeeks         Int
+  status                ChallengeStatus @default(ACTIVE)
+
+  buyInAmount           Decimal  @default(0) @db.Decimal(10, 2)
+  weeklyPrizeAmount     Decimal  @default(0) @db.Decimal(10, 2)
+  grandPrizeAmount      Decimal? @db.Decimal(10, 2)
+  tokenChampPrizeAmount Decimal? @db.Decimal(10, 2)
+
+  organizerUserId       String
+  organizer             User     @relation(fields: [organizerUserId], references: [id])
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  participants   Participant[]
+  taskTemplates  TaskTemplate[]
+  weeks          Week[]
+  completions    Completion[]
+  tokenLedger    TokenLedger[]
+  sideChallenges SideChallenge[]
+
+  @@index([organizerUserId])
+  @@index([status])
+}
+
+enum ChallengeStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model Participant {
+  id          String   @id @default(cuid())
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  joinedAt    DateTime @default(now())
+  buyInPaid   Boolean  @default(false)
+
+  @@unique([challengeId, userId])
+  @@index([challengeId])
+  @@index([userId])
+}
+
+model TaskTemplate {
+  id          String   @id @default(cuid())
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  name        String
+  description String   @default("")
+  points      Int      @default(1)
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  completions Completion[]
+
+  @@index([challengeId])
+  @@index([challengeId, active])
+}
+
+model Week {
+  id          String   @id @default(cuid())
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  weekIndex   Int
+  startDate   DateTime
+  endDate     DateTime
+  status      WeekStatus @default(UPCOMING)
+
+  lockedAt    DateTime?
+  finalizedAt DateTime?
+  revision    Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  completions    Completion[]
+  tokenLedger    TokenLedger[]
+  sideChallenges SideChallenge[]
+
+  @@unique([challengeId, weekIndex])
+  @@index([challengeId])
+  @@index([status])
+}
+
+enum WeekStatus {
+  UPCOMING
+  OPEN
+  LOCKED
+}
+
+model Completion {
+  id             String   @id @default(cuid())
+  challengeId    String
+  challenge      Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  weekId         String
+  week           Week     @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  taskTemplateId String
+  taskTemplate   TaskTemplate @relation(fields: [taskTemplateId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+
+  completedAt    DateTime @default(now())
+  source         CompletionSource @default(PARTICIPANT)
+  note           String?
+
+  editedByUserId String?
+  editedBy       User?    @relation("CompletionEdits", fields: [editedByUserId], references: [id])
+  editedAt       DateTime?
+
+  createdAt      DateTime @default(now())
+
+  @@unique([weekId, taskTemplateId, userId])
+  @@index([challengeId])
+  @@index([weekId])
+  @@index([userId])
+}
+
+enum CompletionSource {
+  PARTICIPANT
+  ORGANIZER_EDIT
+}
+
+model TokenLedger {
+  id              String   @id @default(cuid())
+  challengeId     String
+  challenge       Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  weekId          String?
+  week            Week?    @relation(fields: [weekId], references: [id], onDelete: SetNull)
+
+  delta           Int
+  reason          TokenLedgerReason
+  relatedEntityId String?
+
+  createdAt       DateTime @default(now())
+
+  @@index([challengeId, userId])
+  @@index([weekId])
+}
+
+enum TokenLedgerReason {
+  PERFECT_WEEK_EARNED
+  SIDE_CHALLENGE_STAKE
+  SIDE_CHALLENGE_WIN
+  SIDE_CHALLENGE_TIE_REFUND
+  SIDE_CHALLENGE_VOID_REFUND
+}
+
+model SideChallenge {
+  id              String   @id @default(cuid())
+  challengeId     String
+  challenge       Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  weekId          String
+  week            Week     @relation(fields: [weekId], references: [id], onDelete: Cascade)
+
+  createdByUserId String
+  createdBy       User     @relation("CreatedSideChallenges", fields: [createdByUserId], references: [id])
+  opponentUserId  String
+  opponent        User     @relation("OpponentSideChallenges", fields: [opponentUserId], references: [id])
+
+  status          SideChallengeStatus @default(PROPOSED)
+  title           String
+  rules           String
+
+  metricType      MetricType
+  unit            String
+  targetValue     Decimal? @db.Decimal(10, 2)
+
+  stakeTokens     Int
+
+  createdAt       DateTime @default(now())
+  acceptedAt      DateTime?
+  expiresAt       DateTime
+  resolvedAt      DateTime?
+
+  winnerUserId    String?
+  resolutionNote  String?
+
+  submissions     SideChallengeSubmission[]
+
+  @@index([challengeId])
+  @@index([weekId])
+  @@index([createdByUserId])
+  @@index([opponentUserId])
+  @@index([status])
+}
+
+enum SideChallengeStatus {
+  PROPOSED
+  ACCEPTED
+  DECLINED
+  OPEN
+  PENDING_REVIEW
+  RESOLVED
+  VOID
+}
+
+enum MetricType {
+  HIGHER_WINS
+  LOWER_WINS
+  TARGET_THRESHOLD
+}
+
+model SideChallengeSubmission {
+  id              String   @id @default(cuid())
+  sideChallengeId String
+  sideChallenge   SideChallenge @relation(fields: [sideChallengeId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+
+  valueNumber     Decimal  @db.Decimal(10, 2)
+  valueDisplay    String
+  note            String?
+
+  submittedAt     DateTime @default(now())
+
+  @@unique([sideChallengeId, userId])
+  @@index([sideChallengeId])
+  @@index([userId])
+}
