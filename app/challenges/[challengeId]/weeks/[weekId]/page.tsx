@@ -53,11 +53,23 @@ export default async function WeekDetailPage({
 
   const isOrganizer = challenge.organizerUserId === session.userId;
 
-  // Get user's completions for this week
+  // Get user's completions for this week with audit info
   const completions = await prisma.completion.findMany({
     where: {
       weekId: week.id,
       userId: session.userId,
+    },
+    include: {
+      user: {
+        select: {
+          displayName: true,
+        },
+      },
+      editedBy: {
+        select: {
+          displayName: true,
+        },
+      },
     },
   });
 

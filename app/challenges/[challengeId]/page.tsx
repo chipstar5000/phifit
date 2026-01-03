@@ -230,6 +230,77 @@ export default async function ChallengePage({
           </div>
         </div>
 
+        {/* Admin Tools Section for Organizers */}
+        {isOrganizer && (
+          <div className="mt-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">
+              Organizer Admin Tools
+            </h2>
+            <div className="bg-white shadow rounded-lg p-4">
+              <p className="text-sm text-gray-600 mb-3">
+                Manage completions, lock/unlock weeks, and view detailed participant data
+              </p>
+              <div className="space-y-2">
+                {challenge.weeks.map((week: { id: string; weekIndex: number; status: string }, index: number) => {
+                  const isCurrent = index === currentWeek;
+                  const isLocked = week.status === "LOCKED";
+
+                  return (
+                    <Link
+                      key={week.id}
+                      href={`/challenges/${challenge.id}/weeks/${week.id}/admin`}
+                      className={`block p-3 rounded-lg border-2 hover:shadow-md transition-all ${
+                        isCurrent
+                          ? "border-blue-300 bg-blue-50 hover:border-blue-400"
+                          : isLocked
+                          ? "border-red-200 bg-red-50 hover:border-red-300"
+                          : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className={`font-medium ${
+                            isCurrent ? "text-blue-900" : isLocked ? "text-red-900" : "text-gray-900"
+                          }`}>
+                            Week {week.weekIndex + 1}
+                          </span>
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            isLocked
+                              ? "bg-red-100 text-red-700"
+                              : week.status === "OPEN"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-100 text-gray-600"
+                          }`}>
+                            {week.status}
+                          </span>
+                          {isCurrent && (
+                            <span className="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded-full font-medium">
+                              Current
+                            </span>
+                          )}
+                        </div>
+                        <svg
+                          className="w-5 h-5 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {currentWeek !== null && (
             <Link

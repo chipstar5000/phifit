@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import CompletionAuditInfo from "./completion-audit-info";
 
 interface Task {
   id: string;
@@ -15,6 +16,11 @@ interface Completion {
   userId: string;
   taskTemplateId: string;
   completedAt: string | Date;
+  source?: string;
+  editedAt?: string | Date | null;
+  editedBy?: { displayName: string } | null;
+  user?: { displayName: string };
+  note?: string | null;
 }
 
 interface WeekViewProps {
@@ -48,6 +54,12 @@ export default function WeekView({
   );
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState("");
+
+  // Create completion map for audit info lookup
+  const completionMap = new Map<string, Completion>();
+  userCompletions.forEach((c) => {
+    completionMap.set(c.taskTemplateId, c);
+  });
 
   const canEdit = weekStatus === "OPEN";
 
@@ -169,6 +181,7 @@ export default function WeekView({
             tasks.map((task: { id: string; name: string; description?: string; points: number }) => {
               const isCompleted = completions.has(task.id);
               const isLoading = loading === task.id;
+              const completionData = completionMap.get(task.id);
 
               return (
                 <button
@@ -219,6 +232,24 @@ export default function WeekView({
                         <span className="text-sm text-gray-500">
                           ({task.points} {task.points === 1 ? "pt" : "pts"})
                         </span>
+                        {isCompleted && completionData?.source === "ORGANIZER_EDIT" && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                            <svg
+                              className="w-3 h-3"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                              />
+                            </svg>
+                            Edited by organizer
+                          </span>
+                        )}
                       </div>
                       {task.description && (
                         <p
@@ -228,6 +259,18 @@ export default function WeekView({
                         >
                           {task.description}
                         </p>
+                      )}
+                      {isCompleted && completionData && completionData.user && (
+                        <div className="mt-2 pt-2 border-t border-green-200">
+                          <CompletionAuditInfo
+                            completion={{
+                              ...completionData,
+                              source: completionData.source || "PARTICIPANT",
+                              user: completionData.user,
+                            }}
+                            variant="inline"
+                          />
+                        </div>
                       )}
                     </div>
                   </div>
