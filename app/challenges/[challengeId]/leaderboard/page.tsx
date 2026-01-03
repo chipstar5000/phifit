@@ -7,6 +7,7 @@ import {
   getPayoutSummary,
   getOverallWinners,
 } from "@/lib/leaderboard";
+import TokenLeaderboard from "@/components/token-leaderboard";
 
 export default async function LeaderboardPage({
   params,
@@ -226,6 +227,19 @@ export default async function LeaderboardPage({
               })}
             </div>
           )}
+        </div>
+
+        {/* Token Leaderboard */}
+        <div className="mt-6">
+          <TokenLeaderboard
+            challengeId={challengeId}
+            currentUserId={session.userId}
+            tokenChampPrizeAmount={
+              challenge.tokenChampPrizeAmount
+                ? Number(challenge.tokenChampPrizeAmount)
+                : undefined
+            }
+          />
         </div>
 
         <div className="mt-4 text-center text-sm text-gray-500">
