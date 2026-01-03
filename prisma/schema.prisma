@@ -35,10 +35,10 @@ model Challenge {
   numberOfWeeks         Int
   status                ChallengeStatus @default(ACTIVE)
 
-  buyInAmount           Decimal  @default(0) @db.Decimal(10, 2)
-  weeklyPrizeAmount     Decimal  @default(0) @db.Decimal(10, 2)
-  grandPrizeAmount      Decimal? @db.Decimal(10, 2)
-  tokenChampPrizeAmount Decimal? @db.Decimal(10, 2)
+  buyInAmount               Decimal  @default(0) @db.Decimal(10, 2)
+  weeklyPrizePercent        Decimal  @default(0) @db.Decimal(5, 2) // Percentage of total pool per week
+  grandPrizePercent         Decimal  @default(0) @db.Decimal(5, 2) // Percentage of total pool
+  tokenChampPrizePercent    Decimal  @default(0) @db.Decimal(5, 2) // Percentage of total pool
 
   organizerUserId       String
   organizer             User     @relation(fields: [organizerUserId], references: [id])

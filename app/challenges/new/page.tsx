@@ -12,16 +12,33 @@ export default function NewChallengePage() {
   const [startDate, setStartDate] = useState("");
   const [numberOfWeeks, setNumberOfWeeks] = useState("4");
   const [buyInAmount, setBuyInAmount] = useState("");
-  const [weeklyPrizeAmount, setWeeklyPrizeAmount] = useState("");
-  const [grandPrizeAmount, setGrandPrizeAmount] = useState("");
-  const [tokenChampPrizeAmount, setTokenChampPrizeAmount] = useState("");
+  const [weeklyPrizePercent, setWeeklyPrizePercent] = useState("");
+  const [grandPrizePercent, setGrandPrizePercent] = useState("");
+  const [tokenChampPrizePercent, setTokenChampPrizePercent] = useState("");
+  const [estimatedParticipants, setEstimatedParticipants] = useState("10");
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Calculate total pool and prize amounts for preview
+  const totalPool = (parseFloat(buyInAmount) || 0) * (parseInt(estimatedParticipants) || 0);
+  const weeklyPrize = totalPool * ((parseFloat(weeklyPrizePercent) || 0) / 100);
+  const grandPrize = totalPool * ((parseFloat(grandPrizePercent) || 0) / 100);
+  const tokenChampPrize = totalPool * ((parseFloat(tokenChampPrizePercent) || 0) / 100);
+  const totalPercentAllocated = (parseFloat(weeklyPrizePercent) || 0) * parseInt(numberOfWeeks) +
+    (parseFloat(grandPrizePercent) || 0) +
+    (parseFloat(tokenChampPrizePercent) || 0);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    // Validate percentages don't exceed 100%
+    if (totalPercentAllocated > 100) {
+      setError(`Total prize allocation (${totalPercentAllocated.toFixed(1)}%) exceeds 100%. Please adjust the percentages.`);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -34,15 +51,15 @@ export default function NewChallengePage() {
           startDate,
           numberOfWeeks: parseInt(numberOfWeeks),
           buyInAmount: buyInAmount ? parseFloat(buyInAmount) : 0,
-          weeklyPrizeAmount: weeklyPrizeAmount
-            ? parseFloat(weeklyPrizeAmount)
+          weeklyPrizePercent: weeklyPrizePercent
+            ? parseFloat(weeklyPrizePercent)
             : 0,
-          grandPrizeAmount: grandPrizeAmount
-            ? parseFloat(grandPrizeAmount)
-            : null,
-          tokenChampPrizeAmount: tokenChampPrizeAmount
-            ? parseFloat(tokenChampPrizeAmount)
-            : null,
+          grandPrizePercent: grandPrizePercent
+            ? parseFloat(grandPrizePercent)
+            : 0,
+          tokenChampPrizePercent: tokenChampPrizePercent
+            ? parseFloat(tokenChampPrizePercent)
+            : 0,
         }),
       });
 
@@ -180,11 +197,10 @@ export default function NewChallengePage() {
 
             <div className="border-t border-gray-200 pt-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Payouts (Display Only)
+                Prize Structure
               </h3>
               <p className="text-sm text-gray-600 mb-4">
-                These amounts are for tracking only. PhiFit does not handle real
-                money transactions.
+                Set the buy-in amount and prize percentages. Actual prize amounts will be calculated based on total participants.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -209,61 +225,120 @@ export default function NewChallengePage() {
 
                 <div>
                   <label
-                    htmlFor="weeklyPrizeAmount"
+                    htmlFor="estimatedParticipants"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Weekly Prize ($)
+                    Estimated Participants (for preview)
                   </label>
                   <input
-                    id="weeklyPrizeAmount"
+                    id="estimatedParticipants"
                     type="number"
-                    step="0.01"
-                    min="0"
-                    value={weeklyPrizeAmount}
-                    onChange={(e) => setWeeklyPrizeAmount(e.target.value)}
+                    min="1"
+                    value={estimatedParticipants}
+                    onChange={(e) => setEstimatedParticipants(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="0.00"
+                    placeholder="10"
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Used to preview prize amounts below
+                  </p>
                 </div>
 
                 <div>
                   <label
-                    htmlFor="grandPrizeAmount"
+                    htmlFor="weeklyPrizePercent"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Grand Prize ($)
+                    Weekly Prize (% per week)
                   </label>
                   <input
-                    id="grandPrizeAmount"
+                    id="weeklyPrizePercent"
                     type="number"
-                    step="0.01"
+                    step="0.1"
                     min="0"
-                    value={grandPrizeAmount}
-                    onChange={(e) => setGrandPrizeAmount(e.target.value)}
+                    max="100"
+                    value={weeklyPrizePercent}
+                    onChange={(e) => setWeeklyPrizePercent(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="0.00"
+                    placeholder="10"
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Percentage of total pool awarded each week
+                  </p>
                 </div>
 
                 <div>
                   <label
-                    htmlFor="tokenChampPrizeAmount"
+                    htmlFor="grandPrizePercent"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Token Champion Prize ($)
+                    Grand Prize (%)
                   </label>
                   <input
-                    id="tokenChampPrizeAmount"
+                    id="grandPrizePercent"
                     type="number"
-                    step="0.01"
+                    step="0.1"
                     min="0"
-                    value={tokenChampPrizeAmount}
-                    onChange={(e) => setTokenChampPrizeAmount(e.target.value)}
+                    max="100"
+                    value={grandPrizePercent}
+                    onChange={(e) => setGrandPrizePercent(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="0.00"
+                    placeholder="30"
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Percentage of total pool for overall winner
+                  </p>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="tokenChampPrizePercent"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Token Champion Prize (%)
+                  </label>
+                  <input
+                    id="tokenChampPrizePercent"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={tokenChampPrizePercent}
+                    onChange={(e) => setTokenChampPrizePercent(e.target.value)}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="10"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Percentage of total pool for token leader
+                  </p>
                 </div>
               </div>
+
+              {buyInAmount && estimatedParticipants && (parseFloat(weeklyPrizePercent) > 0 || parseFloat(grandPrizePercent) > 0 || parseFloat(tokenChampPrizePercent) > 0) && (
+                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <h4 className="text-sm font-semibold text-blue-900 mb-2">
+                    Prize Pool Preview (with {estimatedParticipants} participants)
+                  </h4>
+                  <div className="space-y-1 text-sm text-blue-800">
+                    <p>Total Pool: <span className="font-semibold">${totalPool.toFixed(2)}</span></p>
+                    {parseFloat(weeklyPrizePercent) > 0 && (
+                      <p>Weekly Prize: <span className="font-semibold">${weeklyPrize.toFixed(2)}</span> per week ({weeklyPrizePercent}%)</p>
+                    )}
+                    {parseFloat(grandPrizePercent) > 0 && (
+                      <p>Grand Prize: <span className="font-semibold">${grandPrize.toFixed(2)}</span> ({grandPrizePercent}%)</p>
+                    )}
+                    {parseFloat(tokenChampPrizePercent) > 0 && (
+                      <p>Token Champion: <span className="font-semibold">${tokenChampPrize.toFixed(2)}</span> ({tokenChampPrizePercent}%)</p>
+                    )}
+                    <p className="pt-2 border-t border-blue-300">
+                      Total Allocated: <span className={`font-semibold ${totalPercentAllocated > 100 ? 'text-red-600' : 'text-blue-900'}`}>
+                        {totalPercentAllocated.toFixed(1)}%
+                      </span>
+                      {totalPercentAllocated > 100 && <span className="text-red-600"> (exceeds 100%!)</span>}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {error && (

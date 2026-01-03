@@ -40,7 +40,6 @@ export async function GET(
       prisma.challenge.findUnique({
         where: { id: challengeId },
         select: {
-          grandPrizeAmount: true,
           status: true,
         },
       }),

@@ -273,14 +273,15 @@ export async function getPayoutSummary(
   }
 
   const buyIn = Number(challenge.buyInAmount);
-  const weeklyPrize = Number(challenge.weeklyPrizeAmount);
   const participantCount = challenge._count.participants;
-
   const totalPot = buyIn * participantCount;
+
+  const weeklyPrizePercent = Number(challenge.weeklyPrizePercent);
+  const grandPrizePercent = Number(challenge.grandPrizePercent);
+
+  const weeklyPrize = totalPot * (weeklyPrizePercent / 100);
   const weeklyPayoutTotal = weeklyPrize * challenge.numberOfWeeks;
-  const grandPrize = challenge.grandPrizeAmount
-    ? Number(challenge.grandPrizeAmount)
-    : totalPot - weeklyPayoutTotal;
+  const grandPrize = totalPot * (grandPrizePercent / 100);
 
   return {
     totalPot,

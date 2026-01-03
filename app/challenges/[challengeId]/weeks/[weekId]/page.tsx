@@ -129,7 +129,6 @@ export default async function WeekDetailPage({
           <WeeklyLeaderboard
             challengeId={challenge.id}
             weekId={week.id}
-            weeklyPrizeAmount={Number(challenge.weeklyPrizeAmount)}
             currentUserId={session.userId}
             isLocked={week.status === "LOCKED"}
           />

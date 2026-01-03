@@ -180,41 +180,54 @@ export default async function ChallengePage({
             </p>
           </div>
 
-          {(Number(challenge.buyInAmount) > 0 || Number(challenge.weeklyPrizeAmount) > 0) && (
+          {Number(challenge.buyInAmount) > 0 && (
             <div className="mt-4 pt-4 border-t border-gray-200">
               <p className="text-sm font-medium text-gray-700 mb-2">
                 Prize Pool (Display Only)
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {Number(challenge.buyInAmount) > 0 && (
-                  <div>
-                    <p className="text-xs text-gray-600">Buy-in</p>
-                    <p className="font-semibold text-gray-900">
-                      ${Number(challenge.buyInAmount).toFixed(2)}
-                    </p>
-                  </div>
-                )}
-                {Number(challenge.weeklyPrizeAmount) > 0 && (
+                <div>
+                  <p className="text-xs text-gray-600">Buy-in</p>
+                  <p className="font-semibold text-gray-900">
+                    ${Number(challenge.buyInAmount).toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-600">Total Pool</p>
+                  <p className="font-semibold text-gray-900">
+                    ${(Number(challenge.buyInAmount) * challenge.participants.length).toFixed(2)}
+                  </p>
+                </div>
+                {Number(challenge.weeklyPrizePercent) > 0 && (
                   <div>
                     <p className="text-xs text-gray-600">Weekly Prize</p>
                     <p className="font-semibold text-gray-900">
-                      ${Number(challenge.weeklyPrizeAmount).toFixed(2)}
+                      ${((Number(challenge.buyInAmount) * challenge.participants.length) * (Number(challenge.weeklyPrizePercent) / 100)).toFixed(2)}
+                      <span className="text-gray-500 text-xs ml-1">
+                        ({Number(challenge.weeklyPrizePercent)}%)
+                      </span>
                     </p>
                   </div>
                 )}
-                {challenge.grandPrizeAmount && (
+                {Number(challenge.grandPrizePercent) > 0 && (
                   <div>
                     <p className="text-xs text-gray-600">Grand Prize</p>
                     <p className="font-semibold text-gray-900">
-                      ${Number(challenge.grandPrizeAmount).toFixed(2)}
+                      ${((Number(challenge.buyInAmount) * challenge.participants.length) * (Number(challenge.grandPrizePercent) / 100)).toFixed(2)}
+                      <span className="text-gray-500 text-xs ml-1">
+                        ({Number(challenge.grandPrizePercent)}%)
+                      </span>
                     </p>
                   </div>
                 )}
-                {challenge.tokenChampPrizeAmount && (
+                {Number(challenge.tokenChampPrizePercent) > 0 && (
                   <div>
                     <p className="text-xs text-gray-600">Token Champion</p>
                     <p className="font-semibold text-gray-900">
-                      ${Number(challenge.tokenChampPrizeAmount).toFixed(2)}
+                      ${((Number(challenge.buyInAmount) * challenge.participants.length) * (Number(challenge.tokenChampPrizePercent) / 100)).toFixed(2)}
+                      <span className="text-gray-500 text-xs ml-1">
+                        ({Number(challenge.tokenChampPrizePercent)}%)
+                      </span>
                     </p>
                   </div>
                 )}

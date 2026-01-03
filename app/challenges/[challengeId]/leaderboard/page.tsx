@@ -27,6 +27,9 @@ export default async function LeaderboardPage({
       participants: {
         where: { userId: session.userId },
       },
+      _count: {
+        select: { participants: true },
+      },
     },
   });
 
@@ -54,6 +57,10 @@ export default async function LeaderboardPage({
     payoutSummary.grandPrize > 0
       ? await getOverallWinners(challengeId, payoutSummary.grandPrize)
       : [];
+
+  // Calculate token champion prize amount
+  const totalPool = Number(challenge.buyInAmount) * challenge._count.participants;
+  const tokenChampPrizeAmount = totalPool * (Number(challenge.tokenChampPrizePercent) / 100);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -235,9 +242,7 @@ export default async function LeaderboardPage({
             challengeId={challengeId}
             currentUserId={session.userId}
             tokenChampPrizeAmount={
-              challenge.tokenChampPrizeAmount
-                ? Number(challenge.tokenChampPrizeAmount)
-                : undefined
+              tokenChampPrizeAmount > 0 ? tokenChampPrizeAmount : undefined
             }
           />
         </div>

@@ -120,18 +120,14 @@ export async function PATCH(
         ...(body.buyInAmount !== undefined && {
           buyInAmount: parseFloat(body.buyInAmount),
         }),
-        ...(body.weeklyPrizeAmount !== undefined && {
-          weeklyPrizeAmount: parseFloat(body.weeklyPrizeAmount),
+        ...(body.weeklyPrizePercent !== undefined && {
+          weeklyPrizePercent: parseFloat(body.weeklyPrizePercent),
         }),
-        ...(body.grandPrizeAmount !== undefined && {
-          grandPrizeAmount: body.grandPrizeAmount
-            ? parseFloat(body.grandPrizeAmount)
-            : null,
+        ...(body.grandPrizePercent !== undefined && {
+          grandPrizePercent: parseFloat(body.grandPrizePercent),
         }),
-        ...(body.tokenChampPrizeAmount !== undefined && {
-          tokenChampPrizeAmount: body.tokenChampPrizeAmount
-            ? parseFloat(body.tokenChampPrizeAmount)
-            : null,
+        ...(body.tokenChampPrizePercent !== undefined && {
+          tokenChampPrizePercent: parseFloat(body.tokenChampPrizePercent),
         }),
         ...(body.status && { status: body.status }),
       },

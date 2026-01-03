@@ -1,9 +1,9 @@
 import { getWeeklyLeaderboard, getWeeklyWinners } from "@/lib/leaderboard";
+import { prisma } from "@/lib/prisma";
 
 interface WeeklyLeaderboardProps {
   challengeId: string;
   weekId: string;
-  weeklyPrizeAmount: number;
   currentUserId: string;
   isLocked: boolean;
 }
@@ -11,11 +11,29 @@ interface WeeklyLeaderboardProps {
 export default async function WeeklyLeaderboard({
   challengeId,
   weekId,
-  weeklyPrizeAmount,
   currentUserId,
   isLocked,
 }: WeeklyLeaderboardProps) {
   const leaderboard = await getWeeklyLeaderboard(challengeId, weekId);
+
+  // Calculate weekly prize amount from percentages
+  let weeklyPrizeAmount = 0;
+  if (isLocked) {
+    const challenge = await prisma.challenge.findUnique({
+      where: { id: challengeId },
+      include: {
+        _count: {
+          select: { participants: true },
+        },
+      },
+    });
+
+    if (challenge) {
+      const totalPool = Number(challenge.buyInAmount) * challenge._count.participants;
+      weeklyPrizeAmount = totalPool * (Number(challenge.weeklyPrizePercent) / 100);
+    }
+  }
+
   const winners =
     isLocked && weeklyPrizeAmount > 0
       ? await getWeeklyWinners(challengeId, weekId, weeklyPrizeAmount)

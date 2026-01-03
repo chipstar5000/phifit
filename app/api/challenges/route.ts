@@ -79,9 +79,9 @@ export async function POST(request: NextRequest) {
       startDate,
       numberOfWeeks,
       buyInAmount,
-      weeklyPrizeAmount,
-      grandPrizeAmount,
-      tokenChampPrizeAmount,
+      weeklyPrizePercent,
+      grandPrizePercent,
+      tokenChampPrizePercent,
     } = body;
 
     // Validation
@@ -114,6 +114,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate prize percentages
+    const weeklyPercent = weeklyPrizePercent ? parseFloat(weeklyPrizePercent) : 0;
+    const grandPercent = grandPrizePercent ? parseFloat(grandPrizePercent) : 0;
+    const tokenPercent = tokenChampPrizePercent ? parseFloat(tokenChampPrizePercent) : 0;
+
+    const totalPercentAllocated = (weeklyPercent * parseInt(numberOfWeeks)) + grandPercent + tokenPercent;
+
+    if (totalPercentAllocated > 100) {
+      return NextResponse.json(
+        { error: `Total prize allocation (${totalPercentAllocated.toFixed(1)}%) exceeds 100%` },
+        { status: 400 }
+      );
+    }
+
     // Create challenge
     const challenge = await prisma.challenge.create({
       data: {
@@ -122,15 +136,9 @@ export async function POST(request: NextRequest) {
         startDate: start,
         numberOfWeeks: parseInt(numberOfWeeks),
         buyInAmount: buyInAmount ? parseFloat(buyInAmount) : 0,
-        weeklyPrizeAmount: weeklyPrizeAmount
-          ? parseFloat(weeklyPrizeAmount)
-          : 0,
-        grandPrizeAmount: grandPrizeAmount
-          ? parseFloat(grandPrizeAmount)
-          : null,
-        tokenChampPrizeAmount: tokenChampPrizeAmount
-          ? parseFloat(tokenChampPrizeAmount)
-          : null,
+        weeklyPrizePercent: weeklyPercent,
+        grandPrizePercent: grandPercent,
+        tokenChampPrizePercent: tokenPercent,
         organizerUserId: session.userId,
         status: "ACTIVE",
       },
