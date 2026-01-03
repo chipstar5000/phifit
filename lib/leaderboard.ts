@@ -53,7 +53,7 @@ export async function getWeeklyLeaderboard(
   // Calculate points per user
   const userPoints = new Map<string, { displayName: string; points: number }>();
 
-  completions.forEach((completion) => {
+  completions.forEach((completion: { userId: string; user: { displayName: string }; taskTemplate: { points: number } }) => {
     const current = userPoints.get(completion.userId) || {
       displayName: completion.user.displayName,
       points: 0,
@@ -77,7 +77,7 @@ export async function getWeeklyLeaderboard(
     },
   });
 
-  participants.forEach((participant) => {
+  participants.forEach((participant: { userId: string; user: { displayName: string } }) => {
     if (!userPoints.has(participant.userId)) {
       userPoints.set(participant.userId, {
         displayName: participant.user.displayName,
@@ -88,7 +88,7 @@ export async function getWeeklyLeaderboard(
 
   // Sort by points descending
   const sortedUsers = Array.from(userPoints.entries())
-    .map(([userId, data]) => ({
+    .map(([userId, data]: [string, { displayName: string; points: number }]) => ({
       userId,
       displayName: data.displayName,
       points: data.points,
@@ -140,7 +140,7 @@ export async function getOverallLeaderboard(
     where: {
       challengeId,
       weekId: {
-        in: weeks.map((w) => w.id),
+        in: weeks.map((w: { id: string }) => w.id),
       },
     },
     include: {
@@ -161,7 +161,7 @@ export async function getOverallLeaderboard(
   // Calculate total points per user
   const userPoints = new Map<string, { displayName: string; points: number }>();
 
-  completions.forEach((completion) => {
+  completions.forEach((completion: { userId: string; user: { displayName: string }; taskTemplate: { points: number } }) => {
     const current = userPoints.get(completion.userId) || {
       displayName: completion.user.displayName,
       points: 0,
@@ -185,7 +185,7 @@ export async function getOverallLeaderboard(
     },
   });
 
-  participants.forEach((participant) => {
+  participants.forEach((participant: { userId: string; user: { displayName: string } }) => {
     if (!userPoints.has(participant.userId)) {
       userPoints.set(participant.userId, {
         displayName: participant.user.displayName,
@@ -196,7 +196,7 @@ export async function getOverallLeaderboard(
 
   // Sort and rank
   const sortedUsers = Array.from(userPoints.entries())
-    .map(([userId, data]) => ({
+    .map(([userId, data]: [string, { displayName: string; points: number }]) => ({
       userId,
       displayName: data.displayName,
       points: data.points,
@@ -241,11 +241,11 @@ export async function getWeeklyWinners(
   if (leaderboard.length === 0) return [];
 
   const topScore = leaderboard[0].points;
-  const winners = leaderboard.filter((p) => p.points === topScore);
+  const winners = leaderboard.filter((p: ParticipantScore) => p.points === topScore);
 
   const prizePerWinner = weeklyPrizeAmount / winners.length;
 
-  return winners.map((w) => ({
+  return winners.map((w: ParticipantScore) => ({
     userId: w.userId,
     displayName: w.displayName,
     points: w.points,
@@ -303,11 +303,11 @@ export async function getOverallWinners(
   if (leaderboard.length === 0) return [];
 
   const topScore = leaderboard[0].points;
-  const winners = leaderboard.filter((p) => p.points === topScore);
+  const winners = leaderboard.filter((p: ParticipantScore) => p.points === topScore);
 
   const prizePerWinner = grandPrizeAmount / winners.length;
 
-  return winners.map((w) => ({
+  return winners.map((w: ParticipantScore) => ({
     userId: w.userId,
     displayName: w.displayName,
     points: w.points,
