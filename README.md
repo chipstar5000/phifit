@@ -93,7 +93,7 @@ npm run db:studio    # Open Prisma Studio
 - [x] Email + PIN authentication
 - [x] Challenge & task management
 - [x] Weekly completions & lifecycle
-- [ ] Leaderboards & payouts
+- [x] Leaderboards & payouts
 - [ ] Token system
 - [ ] Side challenges
 - [ ] Organizer admin features
