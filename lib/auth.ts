@@ -1,4 +1,4 @@
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
@@ -29,9 +29,10 @@ export function validatePin(pin: string): { valid: boolean; error?: string } {
   return { valid: true };
 }
 
-// Hash PIN using argon2
+// Hash PIN using bcrypt (Vercel-compatible, pure JavaScript)
 export async function hashPin(pin: string): Promise<string> {
-  return await argon2.hash(pin);
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(pin, salt);
 }
 
 // Verify PIN against hash
@@ -40,7 +41,7 @@ export async function verifyPin(
   hash: string
 ): Promise<boolean> {
   try {
-    return await argon2.verify(hash, pin);
+    return await bcrypt.compare(pin, hash);
   } catch {
     return false;
   }
