@@ -65,7 +65,7 @@ export async function GET(
 
     // Calculate points per user
     const userPoints = new Map<string, number>();
-    week.completions.forEach((completion) => {
+    week.completions.forEach((completion: { userId: string; taskTemplate: { points: number } }) => {
       const current = userPoints.get(completion.userId) || 0;
       userPoints.set(
         completion.userId,
