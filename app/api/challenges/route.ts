@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { generateWeeks } from "@/lib/weeks";
-import { ChallengeStatus } from "@prisma/client";
 
 // GET /api/challenges - List user's challenges
 export async function GET() {
@@ -133,7 +132,7 @@ export async function POST(request: NextRequest) {
           ? parseFloat(tokenChampPrizeAmount)
           : null,
         organizerUserId: session.userId,
-        status: ChallengeStatus.ACTIVE,
+        status: "ACTIVE",
       },
     });
 
