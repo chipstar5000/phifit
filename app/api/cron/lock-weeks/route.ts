@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { awardPerfectWeekTokensSafe } from "@/lib/tokens";
+import { cleanupSideChallengesOnWeekLock } from "@/lib/side-challenges";
 
 /**
  * Cron endpoint to auto-lock weeks that have ended
@@ -55,6 +56,20 @@ export async function GET() {
           console.error(`Error awarding tokens for week ${week.id}:`, tokenError);
         }
 
+        // Cleanup side challenges
+        let sideChallengeCleanup = null;
+        try {
+          sideChallengeCleanup = await cleanupSideChallengesOnWeekLock(
+            week.challengeId,
+            week.id
+          );
+          console.log(
+            `Week ${week.weekIndex} (${week.challenge.name}) side challenges: ${sideChallengeCleanup.resolved} resolved, ${sideChallengeCleanup.voided} voided`
+          );
+        } catch (sideChallengeError) {
+          console.error(`Error cleaning up side challenges for week ${week.id}:`, sideChallengeError);
+        }
+
         results.push({
           weekId: week.id,
           challengeId: week.challengeId,
@@ -62,6 +77,8 @@ export async function GET() {
           weekIndex: week.weekIndex,
           status: "locked",
           tokensAwarded: tokenAwards?.awarded,
+          sideChallengesResolved: sideChallengeCleanup?.resolved,
+          sideChallengesVoided: sideChallengeCleanup?.voided,
         });
 
         console.log(

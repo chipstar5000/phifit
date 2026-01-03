@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import WeekView from "@/components/week-view";
 import WeeklyLeaderboard from "@/components/weekly-leaderboard";
+import SideChallengeList from "@/components/side-challenge-list";
 
 export default async function WeekDetailPage({
   params,
@@ -131,6 +132,16 @@ export default async function WeekDetailPage({
             weeklyPrizeAmount={Number(challenge.weeklyPrizeAmount)}
             currentUserId={session.userId}
             isLocked={week.status === "LOCKED"}
+          />
+        </div>
+
+        {/* Side Challenges */}
+        <div className="mt-6">
+          <SideChallengeList
+            challengeId={challenge.id}
+            weekId={week.id}
+            currentUserId={session.userId}
+            isOrganizer={isOrganizer}
           />
         </div>
 

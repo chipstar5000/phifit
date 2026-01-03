@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { verifyOrganizer } from "@/lib/authorization";
 import { awardPerfectWeekTokensSafe } from "@/lib/tokens";
+import { cleanupSideChallengesOnWeekLock } from "@/lib/side-challenges";
 
 // POST /api/challenges/[challengeId]/weeks/[weekId]/admin/lock - Manual lock/unlock week
 export async function POST(
@@ -56,6 +57,7 @@ export async function POST(
 
     // If locking the week, detect perfect weeks and award tokens
     let tokenAwards = null;
+    let sideChallengeCleanup = null;
     if (action === "lock") {
       try {
         tokenAwards = await awardPerfectWeekTokensSafe(challengeId, weekId);
@@ -66,12 +68,27 @@ export async function POST(
         // Log error but don't fail the lock operation
         console.error("Error awarding perfect week tokens:", tokenError);
       }
+
+      // Cleanup side challenges (resolve pending, void incomplete)
+      try {
+        sideChallengeCleanup = await cleanupSideChallengesOnWeekLock(
+          challengeId,
+          weekId
+        );
+        console.log(
+          `Week ${weekId} side challenges cleanup: ${sideChallengeCleanup.resolved} resolved, ${sideChallengeCleanup.voided} voided`
+        );
+      } catch (sideChallengeError) {
+        // Log error but don't fail the lock operation
+        console.error("Error cleaning up side challenges:", sideChallengeError);
+      }
     }
 
     return NextResponse.json({
       week: updatedWeek,
       message: `Week ${action === "lock" ? "locked" : "unlocked"} successfully`,
       tokenAwards: tokenAwards || undefined,
+      sideChallengeCleanup: sideChallengeCleanup || undefined,
     });
   } catch (error) {
     console.error("Week lock/unlock error:", error);
