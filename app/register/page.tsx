@@ -40,19 +40,28 @@ export default function RegisterPage() {
         body: JSON.stringify({ email, displayName, pin }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        setError(data.error || "Registration failed");
+        let errorMessage = "Registration failed";
+        try {
+          const data = await response.json();
+          errorMessage = data.error || errorMessage;
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+          errorMessage = `Server error: ${response.status} ${response.statusText}`;
+        }
+        setError(errorMessage);
         return;
       }
+
+      const data = await response.json();
 
       // Success - redirect to dashboard
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
-      setError("An error occurred. Please try again.");
-      console.error(err);
+      console.error("Registration error:", err);
+      const errorMessage = err instanceof Error ? err.message : "An error occurred. Please try again.";
+      setError(`Network error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
