@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { generateWeeks } from "@/lib/weeks";
+import { generateWeeks, WeekData } from "@/lib/weeks";
 
 // GET /api/challenges - List user's challenges
 export async function GET() {
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
     // Generate weeks
     const weeksData = generateWeeks(start, parseInt(numberOfWeeks));
     await prisma.week.createMany({
-      data: weeksData.map((week) => ({
+      data: weeksData.map((week: WeekData) => ({
         challengeId: challenge.id,
         weekIndex: week.weekIndex,
         startDate: week.startDate,
