@@ -78,13 +78,13 @@ export default function TokenLeaderboard({
   };
 
   return (
-    <div className="bg-white shadow rounded-lg p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-900">Token Leaderboard</h2>
+    <div className="bg-white shadow rounded-lg p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900">Token Leaderboard</h2>
         {tokenChampPrizeAmount && tokenChampPrizeAmount > 0 && (
-          <div className="text-right">
+          <div className="text-left sm:text-right">
             <p className="text-xs text-gray-600">Token Champion Prize</p>
-            <p className="text-lg font-bold text-yellow-600">
+            <p className="text-base sm:text-lg font-bold text-yellow-600">
               ${Number(tokenChampPrizeAmount).toFixed(2)}
             </p>
           </div>
@@ -127,22 +127,22 @@ export default function TokenLeaderboard({
             return (
               <div
                 key={entry.userId}
-                className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all ${
+                className={`flex items-center justify-between p-2 sm:p-3 rounded-lg border-2 transition-all ${
                   isCurrentUser
                     ? "border-blue-300 bg-blue-50"
                     : "border-gray-200 bg-gray-50"
                 }`}
               >
-                <div className="flex items-center gap-3 flex-1">
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                   {/* Rank */}
-                  <div className="w-10 flex justify-center">
+                  <div className="w-8 sm:w-10 flex justify-center flex-shrink-0">
                     {rankBadge}
                   </div>
 
                   {/* Name */}
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <p
-                      className={`font-medium ${
+                      className={`font-medium text-sm sm:text-base truncate ${
                         isCurrentUser ? "text-blue-900" : "text-gray-900"
                       }`}
                     >
@@ -162,11 +162,11 @@ export default function TokenLeaderboard({
                   </div>
 
                   {/* Token Count */}
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-300 text-yellow-900 rounded-full">
+                  <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-300 text-yellow-900 rounded-full flex-shrink-0">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <circle cx="10" cy="10" r="8" fill="#FCD34D" stroke="currentColor" strokeWidth="1" />
                     </svg>
-                    <span className="font-semibold">{entry.balance}</span>
+                    <span className="font-semibold text-sm sm:text-base">{entry.balance}</span>
                   </div>
                 </div>
               </div>

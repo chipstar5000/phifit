@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { getCurrentWeekIndex } from "@/lib/weeks";
+import MobileNav from "@/components/mobile-nav";
+import FloatingActionButton from "@/components/floating-action-button";
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -44,35 +46,18 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center">
-              <Link href="/dashboard">
-                <h1 className="text-xl font-bold text-gray-900">PhiFit</h1>
-              </Link>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-700">{user?.displayName}</span>
-              <form action="/api/auth/logout" method="POST">
-                <button
-                  type="submit"
-                  className="text-sm text-gray-600 hover:text-gray-900"
-                >
-                  Logout
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <MobileNav userName={user?.displayName} showCreateChallenge={true} />
+      <FloatingActionButton
+        href="/challenges/new"
+        label="Create Challenge"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">My Challenges</h2>
           <Link
             href="/challenges/new"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="hidden md:inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Create Challenge
           </Link>

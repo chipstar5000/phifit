@@ -126,8 +126,145 @@ export default function WeekAdminGrid({
         </div>
       )}
 
-      {/* Grid Container */}
-      <div className="overflow-x-auto">
+      {/* Mobile Card View */}
+      <div className="lg:hidden space-y-4">
+        {participants.map((participant) => {
+          const userPoints = pointsByUser.get(participant.userId) || 0;
+
+          return (
+            <div
+              key={participant.userId}
+              className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+            >
+              {/* Participant Header */}
+              <div className="flex items-start justify-between mb-4 pb-3 border-b border-gray-200">
+                <div>
+                  <div className="font-semibold text-gray-900">
+                    {participant.user.displayName}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {participant.user.email}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-gray-900">
+                    {userPoints}
+                  </div>
+                  <div className="text-xs text-gray-500">points</div>
+                </div>
+              </div>
+
+              {/* Tasks Grid */}
+              <div className="space-y-3">
+                {tasks.map((task) => {
+                  const cellKey = `${participant.userId}-${task.id}`;
+                  const completion = completionMap.get(cellKey);
+                  const isCompleted = !!completion;
+                  const isLoading = loadingCell === cellKey;
+                  const isOrganizerEdit = completion?.source === "ORGANIZER_EDIT";
+
+                  return (
+                    <div key={task.id} className="flex items-center gap-3">
+                      {/* Task Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-gray-900 text-sm">
+                          {task.name}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {task.points} points
+                        </div>
+                      </div>
+
+                      {/* Toggle Button */}
+                      <button
+                        onClick={() => handleToggle(participant.userId, task.id)}
+                        disabled={isLoading}
+                        className={`flex-shrink-0 w-16 h-16 rounded-lg transition-all active:scale-95 ${
+                          isCompleted
+                            ? isOrganizerEdit
+                              ? "bg-yellow-100 border-2 border-yellow-300 active:bg-yellow-200"
+                              : "bg-green-100 border-2 border-green-300 active:bg-green-200"
+                            : "bg-gray-50 border-2 border-gray-200 active:bg-gray-100"
+                        } ${isLoading ? "opacity-50" : ""}`}
+                      >
+                        {isLoading ? (
+                          <svg
+                            className="animate-spin h-6 w-6 mx-auto text-gray-600"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                        ) : isCompleted ? (
+                          <svg
+                            className={`w-8 h-8 mx-auto ${
+                              isOrganizerEdit ? "text-yellow-700" : "text-green-700"
+                            }`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={3}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        ) : null}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Completion Audit Info */}
+              {tasks.some((task) => {
+                const cellKey = `${participant.userId}-${task.id}`;
+                return completionMap.get(cellKey);
+              }) && (
+                <div className="mt-4 pt-3 border-t border-gray-200">
+                  <p className="text-xs text-gray-500 mb-2">Completed tasks:</p>
+                  <div className="space-y-2">
+                    {tasks.map((task) => {
+                      const cellKey = `${participant.userId}-${task.id}`;
+                      const completion = completionMap.get(cellKey);
+                      if (!completion) return null;
+
+                      return (
+                        <div
+                          key={task.id}
+                          className="text-xs bg-gray-50 rounded p-2"
+                        >
+                          <CompletionAuditInfo
+                            completion={completion}
+                            variant="inline"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden lg:block overflow-x-auto">
         <table className="min-w-full border-collapse">
           <thead>
             <tr>

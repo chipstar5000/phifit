@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "./toast-provider";
 
 interface SideChallengeSubmissionModalProps {
   challengeId: string;
@@ -23,6 +24,7 @@ export default function SideChallengeSubmissionModal({
   onClose,
   onSuccess,
 }: SideChallengeSubmissionModalProps) {
+  const toast = useToast();
   const [valueNumber, setValueNumber] = useState("");
   const [valueDisplay, setValueDisplay] = useState("");
   const [note, setNote] = useState("");
@@ -74,15 +76,14 @@ export default function SideChallengeSubmissionModal({
 
       // Check if challenge was auto-resolved
       if (data.resolved) {
-        alert(
-          data.resolution.winnerUserId
-            ? `Challenge resolved! ${
-                data.resolution.winnerId === "creator" ? "Creator" : "Opponent"
-              } wins!`
-            : "Challenge resolved! It's a tie - stakes refunded."
-        );
+        const message = data.resolution.winnerUserId
+          ? `Challenge resolved! ${
+              data.resolution.winnerId === "creator" ? "Creator" : "Opponent"
+            } wins!`
+          : "Challenge resolved! It's a tie - stakes refunded.";
+        toast.success(message, 6000);
       } else {
-        alert("Result submitted! Waiting for opponent to submit.");
+        toast.info("Result submitted! Waiting for opponent to submit.", 5000);
       }
 
       onSuccess();

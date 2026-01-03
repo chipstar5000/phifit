@@ -23,18 +23,18 @@ export default async function WeeklyLeaderboard({
 
   return (
     <div className="bg-white shadow rounded-lg overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900">
+      <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900">
           Weekly Leaderboard
         </h3>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-xs sm:text-sm text-gray-600 mt-1">
           {isLocked ? "Final standings" : "Current standings"}
         </p>
       </div>
 
       {winners.length > 0 && (
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-b-2 border-green-300 px-6 py-4">
-          <p className="text-sm font-medium text-green-900 mb-3">
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-b-2 border-green-300 px-4 sm:px-6 py-3 sm:py-4">
+          <p className="text-xs sm:text-sm font-medium text-green-900 mb-2 sm:mb-3">
             🎉 Weekly {winners.length > 1 ? "Winners" : "Winner"}
           </p>
           <div className="space-y-2">
@@ -43,10 +43,10 @@ export default async function WeeklyLeaderboard({
                 key={winner.userId}
                 className="flex items-center justify-between"
               >
-                <span className="font-semibold text-green-900">
+                <span className="font-semibold text-green-900 text-sm sm:text-base truncate mr-2">
                   {winner.displayName}
                 </span>
-                <span className="text-lg font-bold text-green-600">
+                <span className="text-base sm:text-lg font-bold text-green-600 flex-shrink-0">
                   ${winner.prizeAmount.toFixed(2)}
                 </span>
               </div>
@@ -56,7 +56,7 @@ export default async function WeeklyLeaderboard({
       )}
 
       {leaderboard.length === 0 ? (
-        <div className="p-6 text-center text-gray-600">
+        <div className="p-4 sm:p-6 text-center text-gray-600 text-sm">
           No completions yet
         </div>
       ) : (
@@ -68,13 +68,13 @@ export default async function WeeklyLeaderboard({
             return (
               <div
                 key={entry.userId}
-                className={`px-6 py-3 flex items-center justify-between ${
+                className={`px-4 sm:px-6 py-2 sm:py-3 flex items-center justify-between ${
                   isCurrentUser ? "bg-blue-50" : ""
                 }`}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                    className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                       index === 0
                         ? "bg-yellow-400 text-yellow-900"
                         : index === 1
@@ -86,9 +86,9 @@ export default async function WeeklyLeaderboard({
                   >
                     {entry.rank}
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <p
-                      className={`text-sm font-medium ${
+                      className={`text-xs sm:text-sm font-medium truncate ${
                         isCurrentUser ? "text-blue-900" : "text-gray-900"
                       }`}
                     >
@@ -105,8 +105,8 @@ export default async function WeeklyLeaderboard({
                     )}
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold text-gray-900">{entry.points}</p>
+                <div className="text-right flex-shrink-0">
+                  <p className="font-bold text-gray-900 text-sm sm:text-base">{entry.points}</p>
                   <p className="text-xs text-gray-600">pts</p>
                 </div>
               </div>

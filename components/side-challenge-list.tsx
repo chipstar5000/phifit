@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import SideChallengeCard from "./side-challenge-card";
 import SideChallengeProposalModal from "./side-challenge-proposal-modal";
 import SideChallengeSubmissionModal from "./side-challenge-submission-modal";
+import { useToast } from "./toast-provider";
 
 interface SideChallenge {
   id: string;
@@ -43,6 +44,7 @@ export default function SideChallengeList({
   currentUserId,
   isOrganizer,
 }: SideChallengeListProps) {
+  const toast = useToast();
   const [sideChallenges, setSideChallenges] = useState<SideChallenge[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -101,8 +103,9 @@ export default function SideChallengeList({
 
       await fetchSideChallenges();
       setSelectedChallenge(null);
+      toast.success("Challenge accepted!");
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to accept challenge");
+      toast.error(err instanceof Error ? err.message : "Failed to accept challenge");
     } finally {
       setActionLoading(false);
     }
@@ -111,6 +114,7 @@ export default function SideChallengeList({
   const handleDecline = async (challengeId: string) => {
     if (!selectedChallenge) return;
 
+    // Use browser confirm for now - could be improved with a custom modal
     if (!confirm("Are you sure you want to decline this challenge?")) {
       return;
     }
@@ -132,8 +136,9 @@ export default function SideChallengeList({
 
       await fetchSideChallenges();
       setSelectedChallenge(null);
+      toast.success("Challenge declined");
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to decline challenge");
+      toast.error(err instanceof Error ? err.message : "Failed to decline challenge");
     } finally {
       setActionLoading(false);
     }
@@ -160,8 +165,9 @@ export default function SideChallengeList({
 
       await fetchSideChallenges();
       setSelectedChallenge(null);
+      toast.success("Challenge voided");
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to void challenge");
+      toast.error(err instanceof Error ? err.message : "Failed to void challenge");
     } finally {
       setActionLoading(false);
     }
