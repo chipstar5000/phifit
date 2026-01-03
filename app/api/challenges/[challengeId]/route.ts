@@ -59,7 +59,7 @@ export async function GET(
     // Check if user has access
     const hasAccess =
       challenge.organizerUserId === session.userId ||
-      challenge.participants.some((p) => p.userId === session.userId);
+      challenge.participants.some((p: { userId: string }) => p.userId === session.userId);
 
     if (!hasAccess) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });

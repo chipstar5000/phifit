@@ -69,7 +69,7 @@ export default async function ChallengePage({
   // Check access
   const hasAccess =
     challenge.organizerUserId === session.userId ||
-    challenge.participants.some((p) => p.userId === session.userId);
+    challenge.participants.some((p: { userId: string }) => p.userId === session.userId);
 
   if (!hasAccess) {
     return (
