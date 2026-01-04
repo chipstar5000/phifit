@@ -6,6 +6,7 @@ import { getCurrentWeekIndex, calculateEndDate } from "@/lib/weeks";
 import TaskManager from "@/components/task-manager";
 import ParticipantManager from "@/components/participant-manager";
 import TokenBalance from "@/components/token-balance";
+import DeleteChallengeButton from "@/components/delete-challenge-button";
 
 export default async function ChallengePage({
   params,
@@ -375,6 +376,24 @@ export default async function ChallengePage({
             </div>
           </Link>
         </div>
+
+        {/* Delete Challenge - Organizer Only */}
+        {isOrganizer && (
+          <div className="mt-8 border-t border-gray-300 pt-6">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-red-900 mb-2">
+                Danger Zone
+              </h3>
+              <p className="text-sm text-red-700 mb-4">
+                Permanently delete this challenge and all associated data. This action cannot be undone.
+              </p>
+              <DeleteChallengeButton
+                challengeId={challenge.id}
+                challengeName={challenge.name}
+              />
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

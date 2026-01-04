@@ -142,3 +142,57 @@ export async function PATCH(
     );
   }
 }
+
+// DELETE /api/challenges/[challengeId] - Delete challenge
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ challengeId: string }> }
+) {
+  try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { challengeId } = await params;
+
+    // Check if user is organizer
+    const challenge = await prisma.challenge.findUnique({
+      where: { id: challengeId },
+      select: {
+        organizerUserId: true,
+        name: true,
+      },
+    });
+
+    if (!challenge) {
+      return NextResponse.json(
+        { error: "Challenge not found" },
+        { status: 404 }
+      );
+    }
+
+    if (challenge.organizerUserId !== session.userId) {
+      return NextResponse.json(
+        { error: "Only organizer can delete challenge" },
+        { status: 403 }
+      );
+    }
+
+    // Delete challenge (Prisma cascade deletes all related records)
+    await prisma.challenge.delete({
+      where: { id: challengeId },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `Challenge "${challenge.name}" deleted successfully`
+    });
+  } catch (error) {
+    console.error("Delete challenge error:", error);
+    return NextResponse.json(
+      { error: "Failed to delete challenge" },
+      { status: 500 }
+    );
+  }
+}
