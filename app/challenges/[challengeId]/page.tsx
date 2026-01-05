@@ -120,7 +120,7 @@ export default async function ChallengePage({
 
         <div className="bg-white shadow rounded-lg p-6 mb-6">
           <div className="flex items-start justify-between mb-4">
-            <div>
+            <div className="flex-1">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 {challenge.name}
               </h1>
@@ -128,11 +128,21 @@ export default async function ChallengePage({
                 <p className="text-gray-600">{challenge.description}</p>
               )}
             </div>
-            {isOrganizer && (
-              <span className="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded">
-                Organizer
-              </span>
-            )}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {isOrganizer && (
+                <>
+                  <Link
+                    href={`/challenges/${challenge.id}/edit`}
+                    className="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 text-sm font-medium"
+                  >
+                    Edit
+                  </Link>
+                  <span className="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded">
+                    Organizer
+                  </span>
+                </>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-200">

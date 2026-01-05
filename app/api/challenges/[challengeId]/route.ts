@@ -109,6 +109,18 @@ export async function PATCH(
       );
     }
 
+    // Validate startDate if provided
+    let startDateObj;
+    if (body.startDate) {
+      startDateObj = new Date(body.startDate);
+      if (isNaN(startDateObj.getTime())) {
+        return NextResponse.json(
+          { error: "Invalid start date" },
+          { status: 400 }
+        );
+      }
+    }
+
     // Update challenge
     const updatedChallenge = await prisma.challenge.update({
       where: { id: challengeId },
@@ -117,6 +129,7 @@ export async function PATCH(
         ...(body.description !== undefined && {
           description: body.description.trim(),
         }),
+        ...(startDateObj && { startDate: startDateObj }),
         ...(body.buyInAmount !== undefined && {
           buyInAmount: parseFloat(body.buyInAmount),
         }),
@@ -132,6 +145,31 @@ export async function PATCH(
         ...(body.status && { status: body.status }),
       },
     });
+
+    // If startDate was changed, update all week dates
+    if (startDateObj) {
+      const weeks = await prisma.week.findMany({
+        where: { challengeId },
+        orderBy: { weekIndex: "asc" },
+      });
+
+      for (const week of weeks) {
+        const weekStart = new Date(startDateObj);
+        weekStart.setDate(startDateObj.getDate() + week.weekIndex * 7);
+
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999);
+
+        await prisma.week.update({
+          where: { id: week.id },
+          data: {
+            startDate: weekStart,
+            endDate: weekEnd,
+          },
+        });
+      }
+    }
 
     return NextResponse.json({ challenge: updatedChallenge });
   } catch (error) {
