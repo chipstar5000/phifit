@@ -114,9 +114,11 @@ export default function WeekView({
     .reduce((sum, task) => sum + task.points, 0);
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
+    const d = new Date(date);
+    return d.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
+      timeZone: "UTC",
     });
   };
 

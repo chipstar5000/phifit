@@ -149,13 +149,17 @@ export default async function ChallengePage({
             <div>
               <p className="text-sm text-gray-600">Start Date</p>
               <p className="font-semibold text-gray-900">
-                {new Date(challenge.startDate).toLocaleDateString()}
+                {new Date(challenge.startDate).toLocaleDateString("en-US", {
+                  timeZone: "UTC",
+                })}
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-600">End Date</p>
               <p className="font-semibold text-gray-900">
-                {endDate.toLocaleDateString()}
+                {endDate.toLocaleDateString("en-US", {
+                  timeZone: "UTC",
+                })}
               </p>
             </div>
             <div>

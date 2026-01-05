@@ -37,7 +37,9 @@ export default function CompletionAuditInfo({
     } else if (diffDays < 7) {
       return `${diffDays}d ago`;
     } else {
-      return date.toLocaleDateString();
+      return date.toLocaleDateString("en-US", {
+        timeZone: "UTC",
+      });
     }
   };
 

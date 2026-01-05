@@ -130,7 +130,9 @@ export default async function DashboardPage() {
                       new Date() < challenge.startDate ? (
                       <span className="text-sm font-medium text-blue-600">
                         Starts{" "}
-                        {new Date(challenge.startDate).toLocaleDateString()}
+                        {new Date(challenge.startDate).toLocaleDateString("en-US", {
+                          timeZone: "UTC",
+                        })}
                       </span>
                     ) : (
                       <span className="text-sm font-medium text-gray-600">

@@ -87,7 +87,9 @@ export default async function CurrentWeekPage({
                   This challenge hasn't started yet.
                 </p>
                 <p className="text-sm text-gray-500">
-                  Starts on {new Date(challenge.startDate).toLocaleDateString()}
+                  Starts on {new Date(challenge.startDate).toLocaleDateString("en-US", {
+                    timeZone: "UTC",
+                  })}
                 </p>
               </div>
             ) : (

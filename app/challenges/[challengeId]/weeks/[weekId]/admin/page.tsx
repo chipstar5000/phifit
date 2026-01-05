@@ -215,8 +215,12 @@ export default async function WeekAdminPage({
                 Week {week.weekIndex + 1} Admin Panel
               </p>
               <p className="text-sm text-gray-500 mt-1">
-                {new Date(week.startDate).toLocaleDateString()} -{" "}
-                {new Date(week.endDate).toLocaleDateString()}
+                {new Date(week.startDate).toLocaleDateString("en-US", {
+                  timeZone: "UTC",
+                })} -{" "}
+                {new Date(week.endDate).toLocaleDateString("en-US", {
+                  timeZone: "UTC",
+                })}
               </p>
             </div>
             <span className="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded">
