@@ -20,10 +20,11 @@ export function generateWeeks(
   for (let i = 0; i < numberOfWeeks; i++) {
     const weekStart = new Date(startDate);
     weekStart.setDate(weekStart.getDate() + i * 7);
+    weekStart.setHours(0, 0, 0, 0); // Start at midnight
 
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekEnd.getDate() + 6);
-    weekEnd.setHours(23, 59, 59, 999);
+    weekEnd.setHours(23, 59, 59, 999); // End at 23:59:59.999
 
     // Determine week status
     let status: WeekStatus;
@@ -54,7 +55,10 @@ export function getCurrentWeekIndex(
   numberOfWeeks: number
 ): number | null {
   const now = new Date();
+  now.setHours(0, 0, 0, 0); // Normalize to start of day
+
   const start = new Date(startDate);
+  start.setHours(0, 0, 0, 0); // Normalize to start of day
 
   if (now < start) {
     return null; // Challenge hasn't started
@@ -93,7 +97,11 @@ export function isChallengeActive(
   numberOfWeeks: number
 ): boolean {
   const now = new Date();
+  now.setHours(0, 0, 0, 0); // Normalize to start of day
+
   const start = new Date(startDate);
+  start.setHours(0, 0, 0, 0); // Normalize to start of day
+
   const end = calculateEndDate(startDate, numberOfWeeks);
 
   return now >= start && now <= end;

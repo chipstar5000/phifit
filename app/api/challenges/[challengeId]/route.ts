@@ -156,10 +156,11 @@ export async function PATCH(
       for (const week of weeks) {
         const weekStart = new Date(startDateObj);
         weekStart.setDate(startDateObj.getDate() + week.weekIndex * 7);
+        weekStart.setHours(0, 0, 0, 0); // Start at midnight
 
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekStart.getDate() + 6);
-        weekEnd.setHours(23, 59, 59, 999);
+        weekEnd.setHours(23, 59, 59, 999); // End at 23:59:59.999
 
         await prisma.week.update({
           where: { id: week.id },
