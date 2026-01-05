@@ -19,12 +19,12 @@ export function generateWeeks(
 
   for (let i = 0; i < numberOfWeeks; i++) {
     const weekStart = new Date(startDate);
-    weekStart.setDate(weekStart.getDate() + i * 7);
-    weekStart.setHours(0, 0, 0, 0); // Start at midnight
+    weekStart.setUTCDate(weekStart.getUTCDate() + i * 7);
+    weekStart.setUTCHours(0, 0, 0, 0); // Start at midnight UTC
 
     const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekEnd.getDate() + 6);
-    weekEnd.setHours(23, 59, 59, 999); // End at 23:59:59.999
+    weekEnd.setUTCDate(weekEnd.getUTCDate() + 6);
+    weekEnd.setUTCHours(23, 59, 59, 999); // End at 23:59:59.999 UTC
 
     // Determine week status
     let status: WeekStatus;
@@ -55,10 +55,10 @@ export function getCurrentWeekIndex(
   numberOfWeeks: number
 ): number | null {
   const now = new Date();
-  now.setHours(0, 0, 0, 0); // Normalize to start of day
+  now.setUTCHours(0, 0, 0, 0); // Normalize to start of day UTC
 
   const start = new Date(startDate);
-  start.setHours(0, 0, 0, 0); // Normalize to start of day
+  start.setUTCHours(0, 0, 0, 0); // Normalize to start of day UTC
 
   if (now < start) {
     return null; // Challenge hasn't started
@@ -84,8 +84,8 @@ export function calculateEndDate(
   numberOfWeeks: number
 ): Date {
   const endDate = new Date(startDate);
-  endDate.setDate(endDate.getDate() + numberOfWeeks * 7 - 1);
-  endDate.setHours(23, 59, 59, 999);
+  endDate.setUTCDate(endDate.getUTCDate() + numberOfWeeks * 7 - 1);
+  endDate.setUTCHours(23, 59, 59, 999);
   return endDate;
 }
 
@@ -97,10 +97,10 @@ export function isChallengeActive(
   numberOfWeeks: number
 ): boolean {
   const now = new Date();
-  now.setHours(0, 0, 0, 0); // Normalize to start of day
+  now.setUTCHours(0, 0, 0, 0); // Normalize to start of day UTC
 
   const start = new Date(startDate);
-  start.setHours(0, 0, 0, 0); // Normalize to start of day
+  start.setUTCHours(0, 0, 0, 0); // Normalize to start of day UTC
 
   const end = calculateEndDate(startDate, numberOfWeeks);
 

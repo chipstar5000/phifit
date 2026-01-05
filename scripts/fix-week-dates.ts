@@ -20,13 +20,13 @@ async function fixWeekDates() {
     let fixedCount = 0;
 
     for (const week of weeks) {
-      // Normalize startDate to midnight
+      // Normalize startDate to midnight UTC
       const startDate = new Date(week.startDate);
-      startDate.setHours(0, 0, 0, 0);
+      startDate.setUTCHours(0, 0, 0, 0);
 
-      // Normalize endDate to 23:59:59.999
+      // Normalize endDate to 23:59:59.999 UTC
       const endDate = new Date(week.endDate);
-      endDate.setHours(23, 59, 59, 999);
+      endDate.setUTCHours(23, 59, 59, 999);
 
       // Check if dates need updating
       if (
