@@ -2,6 +2,79 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
+// GET /api/challenges/[challengeId]/participants - List all participants
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ challengeId: string }> }
+) {
+  try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { challengeId } = await params;
+
+    // Verify user has access to this challenge
+    const challenge = await prisma.challenge.findUnique({
+      where: { id: challengeId },
+      select: {
+        id: true,
+        organizerUserId: true,
+        participants: {
+          where: {
+            userId: {
+              not: session.userId, // Exclude current user from list
+            },
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                displayName: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!challenge) {
+      return NextResponse.json(
+        { error: "Challenge not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check if user has access (is participant or organizer)
+    const isOrganizer = challenge.organizerUserId === session.userId;
+    const isParticipant = await prisma.participant.findUnique({
+      where: {
+        challengeId_userId: {
+          challengeId,
+          userId: session.userId,
+        },
+      },
+    });
+
+    if (!isOrganizer && !isParticipant) {
+      return NextResponse.json(
+        { error: "Access denied" },
+        { status: 403 }
+      );
+    }
+
+    return NextResponse.json({ participants: challenge.participants });
+  } catch (error) {
+    console.error("Fetch participants error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch participants" },
+      { status: 500 }
+    );
+  }
+}
+
 // POST /api/challenges/[challengeId]/participants - Join challenge or invite
 export async function POST(
   request: NextRequest,
