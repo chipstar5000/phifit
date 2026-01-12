@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { getCurrentWeekIndex } from "@/lib/weeks";
 import WeekView from "@/components/week-view";
+import WeeklyLeaderboard from "@/components/weekly-leaderboard";
+import SideChallengeList from "@/components/side-challenge-list";
 
 export default async function CurrentWeekPage({
   params,
@@ -183,6 +185,26 @@ export default async function CurrentWeekPage({
           currentUserId={session.userId}
           isOrganizer={isOrganizer}
         />
+
+        {/* Weekly Leaderboard */}
+        <div className="mt-6">
+          <WeeklyLeaderboard
+            challengeId={challenge.id}
+            weekId={currentWeek.id}
+            currentUserId={session.userId}
+            isLocked={currentWeek.status === "LOCKED"}
+          />
+        </div>
+
+        {/* Side Challenges */}
+        <div className="mt-6">
+          <SideChallengeList
+            challengeId={challenge.id}
+            weekId={currentWeek.id}
+            currentUserId={session.userId}
+            isOrganizer={isOrganizer}
+          />
+        </div>
 
         {/* Week navigation */}
         <div className="mt-6 bg-white shadow rounded-lg p-4">
