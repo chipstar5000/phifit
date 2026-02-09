@@ -22,6 +22,12 @@ export default function WeekStatusControl({
     null
   );
   const [error, setError] = useState("");
+  const [recalcResult, setRecalcResult] = useState<{
+    awarded: number;
+    revoked: number;
+    unchanged: number;
+  } | null>(null);
+  const [recalcLoading, setRecalcLoading] = useState(false);
 
   const handleAction = async (action: "lock" | "unlock") => {
     setLoading(true);
@@ -54,6 +60,32 @@ export default function WeekStatusControl({
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRecalculateTokens = async () => {
+    setRecalcLoading(true);
+    setError("");
+    setRecalcResult(null);
+
+    try {
+      const response = await fetch(
+        `/api/challenges/${challengeId}/weeks/${weekId}/admin/recalculate-tokens`,
+        { method: "POST" }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to recalculate tokens");
+      }
+
+      const data = await response.json();
+      setRecalcResult(data);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setRecalcLoading(false);
     }
   };
 
@@ -129,7 +161,24 @@ export default function WeekStatusControl({
             Unlock Week
           </button>
         )}
+
+        {isLocked && (
+          <button
+            onClick={handleRecalculateTokens}
+            disabled={recalcLoading}
+            className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+          >
+            {recalcLoading ? "Recalculating..." : "Recalculate Tokens"}
+          </button>
+        )}
       </div>
+
+      {/* Recalculate Result */}
+      {recalcResult && (
+        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+          Tokens recalculated: {recalcResult.awarded} awarded, {recalcResult.revoked} revoked, {recalcResult.unchanged} unchanged
+        </div>
+      )}
 
       {/* Error Display */}
       {error && (
