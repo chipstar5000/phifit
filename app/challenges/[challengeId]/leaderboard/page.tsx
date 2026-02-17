@@ -68,7 +68,7 @@ export default async function LeaderboardPage({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <Link href="/dashboard">
-              <h1 className="text-xl font-bold text-gray-900">PhiFit</h1>
+              <h1 className="text-xl font-bold text-gray-900">FriendlyFit</h1>
             </Link>
           </div>
         </div>
@@ -248,7 +248,7 @@ export default async function LeaderboardPage({
         </div>
 
         <div className="mt-4 text-center text-sm text-gray-500">
-          Note: Prize amounts are for display only and are not handled by PhiFit
+          Note: Prize amounts are for display only and are not handled by FriendlyFit
         </div>
       </main>
     </div>

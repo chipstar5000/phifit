@@ -14,9 +14,9 @@ export default async function Home() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-2xl w-full text-center space-y-8">
         <div className="space-y-4">
-          <h1 className="text-6xl font-bold text-gray-900">PhiFit</h1>
+          <h1 className="text-6xl font-bold text-gray-900">FriendlyFit</h1>
           <p className="text-2xl text-gray-700 font-medium">
-            Fitness Challenge with Friends
+            Friendly Fitness Challenge
           </p>
           <p className="text-lg text-gray-600 max-w-xl mx-auto">
             Compete in multi-week challenges, track weekly tasks, climb

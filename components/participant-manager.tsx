@@ -130,7 +130,7 @@ export default function ParticipantManager({
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             />
             <p className="text-xs text-gray-500 mt-1">
-              User must have a PhiFit account
+              User must have a FriendlyFit account
             </p>
           </div>
           <div className="flex gap-3">

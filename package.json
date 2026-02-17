@@ -1,7 +1,7 @@
 {
-  "name": "phifit",
+  "name": "friendlyfit",
   "version": "1.0.0",
-  "description": "Mobile-first fitness challenge web app",
+  "description": "Mobile-first friendly fitness challenge web app",
   "private": true,
   "scripts": {
     "dev": "next dev",

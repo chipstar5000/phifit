@@ -179,7 +179,7 @@ export default async function WeekAdminPage({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <Link href="/dashboard">
-              <h1 className="text-xl font-bold text-gray-900">PhiFit</h1>
+              <h1 className="text-xl font-bold text-gray-900">FriendlyFit</h1>
             </Link>
             <div className="flex items-center gap-4">
               <Link

@@ -38,7 +38,7 @@ export default function MobileNav({ userName, showCreateChallenge }: MobileNavPr
             {/* Logo */}
             <div className="flex items-center">
               <Link href="/dashboard" className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-gray-900">PhiFit</h1>
+                <h1 className="text-xl font-bold text-gray-900">FriendlyFit</h1>
               </Link>
             </div>
 

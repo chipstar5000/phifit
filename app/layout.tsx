@@ -3,8 +3,8 @@ import "./globals.css";
 import ToastProvider from "@/components/toast-provider";
 
 export const metadata: Metadata = {
-  title: "PhiFit - Fitness Challenge",
-  description: "Mobile-first fitness challenge app for friends",
+  title: "FriendlyFit - Friendly Fitness Challenge",
+  description: "Mobile-first friendly fitness challenge app for groups of friends",
   manifest: "/manifest.json",
 };
 
